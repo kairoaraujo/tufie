@@ -1,0 +1,94 @@
+{
+    "signatures": [
+        {
+            "keyid": "e041344fbb306f2005f996e7f4c74d5444ee364a05e240a2ddc4aa848aea11ca",
+            "sig": "0bbc374fa0f4b14689b37402b45f426f2bcf31d0e8fe819e4c22a501c11e8dd08925cff9108b7e354b5746755cb598ac28032fd3bf8bed8a2f855ee0fffe6e00"
+        },
+        {
+            "keyid": "232968edec6703696082cbc4dea8b6bd12934a872cf48ed596259f33b63aceef",
+            "sig": "434ddb44fb728dac37a188ce6dade590414bfe63649bded6fa518c2acf14727569789a3726b28f8ea7553a05291ca2350eeb62e7d6af708c78e793fc87a6180c"
+        },
+        {
+            "keyid": "4ecebf07e40834b50b41863e458044966b7747836a33bb434b84c288749434c6",
+            "sig": "73444ea5cb1647e6466b6030bc2475a7fdb8895109678432d196b294325e2ead372152facd00952eb5d81f99b71de33be3858bcc5e4f2702b9ce1b6321b96b0b"
+        }
+    ],
+    "signed": {
+        "_type": "root",
+        "consistent_snapshot": true,
+        "expires": "2024-08-20T12:47:09Z",
+        "keys": {
+            "232968edec6703696082cbc4dea8b6bd12934a872cf48ed596259f33b63aceef": {
+                "keytype": "ed25519",
+                "keyval": {
+                    "public": "4285a8be95b8e53fa2bf9aff52c5af70ecfae13ad818615cd7f670c4310593d8"
+                },
+                "name": "Martin Vrachev",
+                "scheme": "ed25519"
+            },
+            "4ecebf07e40834b50b41863e458044966b7747836a33bb434b84c288749434c6": {
+                "keytype": "ed25519",
+                "keyval": {
+                    "public": "2e361c16de0bbb19ad22e3626e01d2c4ddc83f69efa71cf2afc2ddacc5602e56"
+                },
+                "name": "Lukas P\u00fchringer",
+                "scheme": "ed25519"
+            },
+            "6b227f185bd832cbaa2543f147675807571b4d5e4b958db26ec004c99b81dbb2": {
+                "keytype": "ed25519",
+                "keyval": {
+                    "public": "fb193bc881b0b65a28b0b645c7781fbcf42a65c72224a90dfd80c917d809ee6b"
+                },
+                "name": "Konstantinos Papadopoulos",
+                "scheme": "ed25519"
+            },
+            "8728e31ab121dd37572ad42af1763bd326931e6d26c63cb36f9f9968c8aefcf7": {
+                "keytype": "ed25519",
+                "keyval": {
+                    "public": "c66a4ae4ad03387ffb5b1d0f1ae841bfffe05501ed4aaecfed71cf2f29c71800"
+                },
+                "name": "online key v1",
+                "scheme": "ed25519"
+            },
+            "e041344fbb306f2005f996e7f4c74d5444ee364a05e240a2ddc4aa848aea11ca": {
+                "keytype": "ed25519",
+                "keyval": {
+                    "public": "e36c463d23e0b4b9b49f3358b85a942dfe2fe7a0164986907880d09fec941fd7"
+                },
+                "name": "Kairo de Araujo",
+                "scheme": "ed25519"
+            }
+        },
+        "roles": {
+            "root": {
+                "keyids": [
+                    "e041344fbb306f2005f996e7f4c74d5444ee364a05e240a2ddc4aa848aea11ca",
+                    "6b227f185bd832cbaa2543f147675807571b4d5e4b958db26ec004c99b81dbb2",
+                    "232968edec6703696082cbc4dea8b6bd12934a872cf48ed596259f33b63aceef",
+                    "4ecebf07e40834b50b41863e458044966b7747836a33bb434b84c288749434c6"
+                ],
+                "threshold": 3
+            },
+            "snapshot": {
+                "keyids": [
+                    "8728e31ab121dd37572ad42af1763bd326931e6d26c63cb36f9f9968c8aefcf7"
+                ],
+                "threshold": 1
+            },
+            "targets": {
+                "keyids": [
+                    "8728e31ab121dd37572ad42af1763bd326931e6d26c63cb36f9f9968c8aefcf7"
+                ],
+                "threshold": 1
+            },
+            "timestamp": {
+                "keyids": [
+                    "8728e31ab121dd37572ad42af1763bd326931e6d26c63cb36f9f9968c8aefcf7"
+                ],
+                "threshold": 1
+            }
+        },
+        "spec_version": "1.0.31",
+        "version": 1
+    }
+}
