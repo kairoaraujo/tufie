@@ -127,5 +127,5 @@ func download(ccmd *cobra.Command, args []string) {
 	)
 	cobra.CheckErr(errDownload)
 
-	fmt.Printf("\nArtifact %v donwload completed.\n", target)
+	fmt.Printf("\nArtifact %v download completed.\n", target)
 }
