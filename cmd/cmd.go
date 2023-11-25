@@ -35,7 +35,7 @@ var (
 		Use:     "tufie",
 		Short:   "TUF Command Line Interface",
 		Long:    `The Update Framework (TUF) Command Line Interface`,
-		Version: "0.0.0",
+		Version: "0.1.0",
 	}
 )
 
