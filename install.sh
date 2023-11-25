@@ -67,7 +67,7 @@ cd $TEMPDIR
 curl -s -LO $DOWNLOAD_URL
 
 # Verify the checksum
-FILE_CHECKSUM=$(sha256sum -b tufie_${VERSION}_${OS}_${ARCH}.tar.gz | awk '{print $1}')
+FILE_CHECKSUM=$(shasum -a 256 -b tufie_${VERSION}_${OS}_${ARCH}.tar.gz | awk '{print $1}')
 
 echo file checksum: "    $FILE_CHECKSUM"
 
@@ -102,5 +102,5 @@ cd - > /dev/null
 rm -rf $TEMPDIR
 
 # Check if the binary is installed
-tufie version
+tufie --version
 echo "tufie v${VERSION} has been installed at ${INSTALL_DIR}/tufie"
