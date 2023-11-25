@@ -65,7 +65,19 @@ Available Commands:
 Adding a new repository
 
 ```console
-$ tufie repository add -d -a https://rubygems.org -m https://metadata.rubygems.org -r rubygems-root.json -n rubygems
+Usage:
+  tufie repository add [flags]
+
+Flags:
+      --artifact-hash         add hash prefix to artifact [default: false]
+  -a, --artifact-url string   content artifact base URL
+  -d, --default               set repository as default
+  -h, --help                  help for add
+  -m, --metadata-url string   metadata URL
+  -n, --name string           repository name
+  -r, --root string           trusted Root metadata
+
+$ tufie repository add --default -a https://rubygems.org --metadata-url https://metadata.rubygems.org --root rubygems-root.json --name rubygems
 Config file used for tuf: /Users/kairoaraujo/.tufie/config.yml
 
 Repository 'rubygems' added.
@@ -87,10 +99,10 @@ Metadata Base URL: https://metadata.rubygems.org
 ```
 
 ```console
-$ tufie repository set rubygems
+$ tufie repository set rstuf
 Config file used for tuf: /Users/kairoaraujo/.tufie/config.yml
 
-Updated default repository to 'rubygems'.
+Updated default repository to 'rstuf'.
 ```
 
 
