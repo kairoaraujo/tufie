@@ -1,3 +1,8 @@
+![GitHub Workflow Status (with branch)](https://img.shields.io/github/actions/workflow/status/kairoaraujo/tufie/tests.yml?branch=main)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kairoaraujo/tufie)](https://goreportcard.com/report/github.com/kairoaraujo/tufie)
+[![Go Reference](https://pkg.go.dev/badge/github.com/kairoaraujo/tufie.svg)](https://pkg.go.dev/github.com/kairoaraujo/tufie#readme-manage-tuf-artifact-repositories)
+
+
 # TUFie: An Open Source generic TUF client
 
 TUFie is a TUF (The Update Framework) command-line client. The TUFie simplifies
