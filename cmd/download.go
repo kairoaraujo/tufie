@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -40,7 +39,7 @@ func download(ccmd *cobra.Command, args []string) {
 		error_params string
 	)
 	if err := viper.Unmarshal(&config); err != nil {
-		fmt.Println(err)
+		TUFie.Println(err)
 		os.Exit(1)
 	}
 
@@ -127,5 +126,5 @@ func download(ccmd *cobra.Command, args []string) {
 	)
 	cobra.CheckErr(errDownload)
 
-	fmt.Printf("\nArtifact %v download completed.\n", target)
+	TUFie.Printf("\nArtifact %v download completed.\n", target)
 }

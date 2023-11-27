@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/kairoaraujo/tufie/internal/tuf"
@@ -88,9 +86,9 @@ type RepositoryConfig struct {
 
 // Prints Reposirory Configuration
 func printRepository(repository *RepositoryConfig) {
-	fmt.Printf("\nRepository: %v\n", repository.repository)
-	fmt.Printf("Artifact Base URL: %v\n", repository.targetURL)
-	fmt.Printf("Metadata Base URL: %v\n", repository.metadataURL)
+	TUFie.Printf("\nRepository: %v\n", repository.repository)
+	TUFie.Printf("Artifact Base URL: %v\n", repository.targetURL)
+	TUFie.Printf("Metadata Base URL: %v\n", repository.metadataURL)
 }
 
 // Gets an specific Repository configuration from Config
@@ -109,27 +107,29 @@ func getRepository(repository string, config Config) (*RepositoryConfig, error) 
 }
 
 func setRepository(ccmd *cobra.Command, args []string) {
-	configErr := viper.ReadInConfig()
-	cobra.CheckErr(configErr)
-
-	err := viper.Unmarshal(&config)
-	cobra.CheckErr(err)
 
 	repository := args[0]
-	_, ok := config.Repositories[repository]
-	if ok {
-		if config.DefaultRepository == repository {
-			fmt.Printf("\nNo changes. Current default repository is '%v'.\n", repository)
-			os.Exit(0)
-		}
-		config.DefaultRepository = repository
-		viper.Set("default_repository", repository)
-		err := viper.WriteConfigAs(viper.ConfigFileUsed())
-		cobra.CheckErr(err)
-		fmt.Printf("\nUpdated default repository to '%v'.\n", repository)
+
+	// try to read the configuration
+	err := loadConfig()
+	if err != nil {
+		TUFie.PrintErrln(err)
 	} else {
-		listRepository(ccmd, []string{})
-		fmt.Printf("\nRepository '%v' doesn't exist.\nUse one of repositories above.\n", repository)
+		_ = viper.Unmarshal(&config)
+		_, ok := config.Repositories[repository]
+		if ok {
+			if config.DefaultRepository == repository {
+				TUFie.Printf("\nNo changes. Current default repository is '%v'.\n", repository)
+			} else {
+				viper.Set("default_repository", repository)
+				err := viper.WriteConfig()
+				cobra.CheckErr(err)
+				TUFie.Printf("\nUpdated default repository to '%v'.\n", repository)
+			}
+		} else {
+			listRepository(ccmd, []string{})
+			TUFie.Printf("\nRepository '%v' doesn't exist.\nUse one of repositories above.\n", repository)
+		}
 	}
 }
 
@@ -139,7 +139,7 @@ func listRepository(ccmd *cobra.Command, args []string) {
 
 	err := viper.Unmarshal(&config)
 	cobra.CheckErr(err)
-	fmt.Printf("\nDefault repository: %v\n", config.DefaultRepository)
+	TUFie.Printf("\nDefault repository: %v\n", config.DefaultRepository)
 
 	for k := range config.Repositories {
 		r, _ := getRepository(k, config)
@@ -148,32 +148,37 @@ func listRepository(ccmd *cobra.Command, args []string) {
 }
 
 func showRepository(ccmd *cobra.Command, args []string) {
-
 	var repository string
+
 	if len(args) == 1 {
 		repository = args[0]
-	} else {
-		repository = ""
 	}
 
-	configErr := viper.ReadInConfig()
-	cobra.CheckErr(configErr)
-
-	err := viper.Unmarshal(&config)
-	cobra.CheckErr(err)
-
-	if repository != "" {
-		cr, err := getRepository(repository, config)
-		cobra.CheckErr(err)
-		printRepository(cr)
+	// try to read the configuration
+	err := loadConfig()
+	if err != nil {
+		TUFie.PrintErrln(err)
 	} else {
-		if config.DefaultRepository != "" {
-			cr, err := getRepository(config.DefaultRepository, config)
-			cobra.CheckErr(err)
-			printRepository(cr)
-
+		// load a given repository name as argument
+		if repository != "" {
+			cr, err := getRepository(repository, config)
+			if err != nil {
+				TUFie.PrintErrln(err)
+			} else {
+				printRepository(cr)
+			}
 		} else {
-			fmt.Println("Default repository not configured")
+			// load a default repository configured
+			if config.DefaultRepository == "" {
+				TUFie.Println("No default repository available.")
+			} else {
+				cr, err := getRepository(config.DefaultRepository, config)
+				if err != nil {
+					TUFie.PrintErrln(err)
+				} else {
+					printRepository(cr)
+				}
+			}
 		}
 	}
 }
@@ -195,57 +200,60 @@ func addRepository(ccmd *cobra.Command, args []string) {
 		InitConfig()
 		viper.Set("default_repository", name)
 
+	}
+	configErr = viper.Unmarshal(&config)
+	cobra.CheckErr(configErr)
+
+	_, ok := config.Repositories[name]
+	if ok {
+		err := errors.New(
+			"\nRepository '" + name + "' already exists.\nMaybe 'artifact repository update'?\n",
+		)
+		TUFie.PrintErr(err)
+
 	} else {
-		err := viper.Unmarshal(&config)
-		cobra.CheckErr(err)
-
-		_, ok := config.Repositories[name]
-		if ok {
-			err := errors.New(
-				"\nRepository '" + name + "' already exists.\nMaybe 'artifact repository update'?\n",
-			)
-			cobra.CheckErr(err)
+		if defaultRepo || config.DefaultRepository == "" {
+			viper.Set("default_repository", name)
 		}
-	}
+		viper.Set("repositories."+name+".metadata_url", metadataURL)
+		viper.Set("repositories."+name+".artifact_base_url", targetURL)
+		viper.Set("repositories."+name+".trusted_root", utils.EncodeTrustedRoot(rootBytes))
+		viper.Set("repositories."+name+".hash_prefix", artifactHashPrefix)
+		tufBaseDir, err := Storage.GetBaseDir()
+		cobra.CheckErr(err)
+		writeError := viper.WriteConfigAs(filepath.Join(tufBaseDir, "config.yml"))
+		cobra.CheckErr(writeError)
 
-	if defaultRepo {
-		viper.Set("default_repository", name)
+		TUFie.Printf("\nRepository '%v' added.\n", name)
 	}
-	viper.Set("repositories."+name+".metadata_url", metadataURL)
-	viper.Set("repositories."+name+".artifact_base_url", targetURL)
-	viper.Set("repositories."+name+".trusted_root", utils.EncodeTrustedRoot(rootBytes))
-	viper.Set("repositories."+name+".hash_prefix", artifactHashPrefix)
-	tufBaseDir, err := Storage.GetBaseDir()
-	cobra.CheckErr(err)
-	writeError := viper.WriteConfigAs(filepath.Join(tufBaseDir, "config.yml"))
-	cobra.CheckErr(writeError)
-
-	fmt.Printf("\nRepository '%v' added.\n", name)
 }
 
 func removeRepository(ccmd *cobra.Command, args []string) {
 	repository := args[0]
-	configErr := viper.ReadInConfig()
-	cobra.CheckErr(configErr)
-
-	err := viper.Unmarshal(&config)
-	cobra.CheckErr(err)
-
-	delete(viper.Get("repositories").(map[string]interface{}), repository)
-	fmt.Println(len(config.Repositories))
-	if config.DefaultRepository == repository {
-		if len(config.Repositories) == 1 {
-			viper.Set("default_repository", "")
-		} else {
-			for k := range config.Repositories {
-				viper.Set("default_repository", k)
-				fmt.Printf("New default repository: %v\n", k)
-				break
+	err := loadConfig()
+	if err != nil {
+		TUFie.PrintErr(err)
+	} else {
+		delete(viper.Get("repositories").(map[string]interface{}), repository)
+		viper.WatchConfig()
+		if config.DefaultRepository == repository {
+			if len(viper.Get("repositories").(map[string]interface{})) == 0 {
+				viper.Set("default_repository", "")
+			} else {
+				for k := range viper.Get("repositories").(map[string]interface{}) {
+					viper.Set("default_repository", k)
+					TUFie.Printf("New default repository: '%v'\n", k)
+					break
+				}
 			}
-		}
 
+		}
+		writeError := viper.WriteConfig()
+		if writeError != nil {
+			TUFie.PrintErr(writeError)
+		} else {
+			TUFie.Printf("\nRepository '%v' removed.\n", repository)
+		}
 	}
-	writeError := viper.WriteConfigAs(viper.ConfigFileUsed())
-	cobra.CheckErr(writeError)
 
 }

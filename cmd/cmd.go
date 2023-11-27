@@ -4,7 +4,6 @@ Copyright © 2023 Kairo de Araujo <kairo@dearaujo.nl>
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/kairoaraujo/tufie/internal/storage"
@@ -32,14 +31,18 @@ var (
 	Storage storage.TufiStorageService
 
 	TUFie = &cobra.Command{
-		Use:     "tufie",
-		Short:   "TUF Command Line Interface",
-		Long:    `The Update Framework (TUF) Command Line Interface`,
-		Version: "0.1.1",
+		Use:           "tufie",
+		Short:         "TUF Command Line Interface",
+		Long:          `The Update Framework (TUF) Command Line Interface`,
+		Version:       "0.1.1",
+		SilenceErrors: true,
+		SilenceUsage:  true,
 	}
 )
 
 func Execute() {
+	stgService := storage.StorageService{}
+	Storage = storage.TufiStorageService{StgService: &stgService}
 	err := TUFie.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -47,30 +50,28 @@ func Execute() {
 }
 
 func init() {
-	stgService := storage.StorageService{}
-	Storage = storage.TufiStorageService{StgService: stgService}
-
 	cobra.OnInitialize(InitConfig)
-	tufBaseDir, err := Storage.GetBaseDir()
-	cobra.CheckErr(err)
+
 	TUFie.PersistentFlags().StringVarP(
-		&cfgFile, "config", "c", "", "config file (default is "+tufBaseDir+"/config.yaml)",
+		&cfgFile, "config", "c", "", "config file (default is $HOME/.tufie/config.yaml)",
 	)
-	err = viper.BindPFlag("config", TUFie.PersistentFlags().Lookup("config"))
+	err := viper.BindPFlag("config", TUFie.PersistentFlags().Lookup("config"))
 	cobra.CheckErr(err)
+
 	TUFie.AddCommand(downloadCmd)
 	TUFie.AddCommand(repositoryCmd)
 
 }
 
 func InitConfig() {
+	tufBaseDir, err := Storage.GetBaseDir()
+	cobra.CheckErr(err)
 
-	err := Storage.InitDirs()
+	err = Storage.InitDirs()
 	cobra.CheckErr(err)
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
-		tufBaseDir, err := Storage.GetBaseDir()
 		cobra.CheckErr(err)
 		viper.AddConfigPath(tufBaseDir)
 		viper.SetConfigType("yaml")
@@ -80,7 +81,21 @@ func InitConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Config file used for tuf:", viper.ConfigFileUsed())
+		TUFie.Println("Config file used for TUFie:", viper.ConfigFileUsed())
 	}
 
+}
+
+func loadConfig() error {
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

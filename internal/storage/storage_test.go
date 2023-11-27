@@ -29,7 +29,7 @@ func TestUTestSuite(t *testing.T) {
 }
 
 // Mock storageService.getUserHomeDir()
-func (m *storageServiceMock) getUserHomeDir() (string, error) {
+func (m *storageServiceMock) GetUserHomeDir() (string, error) {
 	args := m.Called()
 	return args.String(0), args.Error(1)
 }
@@ -43,13 +43,13 @@ func (ut *UTStorageSuite) TestgetUserHomeDir() {
 
 	// Use real user setup for testing
 	stgService := StorageService{}
-	Storage := TufiStorageService{StgService: stgService}
+	Storage := TufiStorageService{StgService: &stgService}
 	expected, err := os.UserHomeDir()
 	if err != nil {
 		ut.FailNow(err.Error())
 	}
 
-	homeDir, err := Storage.StgService.getUserHomeDir()
+	homeDir, err := Storage.StgService.GetUserHomeDir()
 	ut.Nil(err)
 	ut.Equal(expected, homeDir)
 }
@@ -58,7 +58,7 @@ func (ut *UTStorageSuite) TestGetUserHomeDir() {
 
 	homeDir := filepath.Join(os.TempDir(), "testTUFieUser")
 	// mock the getUserHomeDir to return the temporary dir/user
-	ut.mockedStorage.On("getUserHomeDir").Return(homeDir, nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(homeDir, nil)
 
 	baseDir, err := ut.stgTest.GetBaseDir()
 	ut.Equal(baseDir, filepath.Join(homeDir, ".tufie"))
@@ -68,7 +68,7 @@ func (ut *UTStorageSuite) TestGetUserHomeDir() {
 func (ut *UTStorageSuite) TestGetUserHomeDir_Error_getUserHome() {
 
 	// mock the getUserHomeDir to return an error
-	ut.mockedStorage.On("getUserHomeDir").Return("", errors.New("Fake permission denied"))
+	ut.mockedStorage.On("GetUserHomeDir").Return("", errors.New("Fake permission denied"))
 
 	baseDir, err := ut.stgTest.GetBaseDir()
 	ut.Error(err)
@@ -78,7 +78,7 @@ func (ut *UTStorageSuite) TestGetUserHomeDir_Error_getUserHome() {
 func (ut *UTStorageSuite) TestInitDirs() {
 
 	// mock the getUserHomeDir to use $TEMP/testTUFieUser user
-	ut.mockedStorage.On("getUserHomeDir").Return(filepath.Join(os.TempDir(), "github.com/kairoaraujo/tufie"), nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(filepath.Join(os.TempDir(), "github.com/kairoaraujo/tufie"), nil)
 
 	err := ut.stgTest.InitDirs()
 	ut.Nil(err)
@@ -87,7 +87,7 @@ func (ut *UTStorageSuite) TestInitDirs() {
 func (ut *UTStorageSuite) TestInitDirs_Error_GetBaseDir() {
 
 	// It also makes GetBaseDir fail
-	ut.mockedStorage.On("getUserHomeDir").Return("", errors.New("Failed GetDir"))
+	ut.mockedStorage.On("GetUserHomeDir").Return("", errors.New("Failed GetDir"))
 
 	err := ut.stgTest.InitDirs()
 	ut.Error(err)
@@ -104,7 +104,7 @@ func (ut *UTStorageSuite) TestInitDirs_Error_MkdirAll() {
 	}
 
 	// Mock the getUserHome to return
-	ut.mockedStorage.On("getUserHomeDir").Return(homeDir, nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(homeDir, nil)
 
 	// The InitDirs creates a $HOME/tufieMkdirAllFailure/.tufie/metadata
 	// To make it get an error, we create the folder as a file
@@ -122,7 +122,7 @@ func (ut *UTStorageSuite) TestMakeRepository() {
 
 	homeDir := filepath.Join(os.TempDir(), "testTUFieUser")
 	// mock to use the $TEMP/testTUFieUser user
-	ut.mockedStorage.On("getUserHomeDir").Return(homeDir, nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(homeDir, nil)
 	expected := filepath.Join(homeDir, ".tufie", "metadata", "testRepository")
 
 	err := ut.stgTest.MakeRepository("testRepository")
@@ -136,7 +136,7 @@ func (ut *UTStorageSuite) TestMakeRepository() {
 func (ut *UTStorageSuite) TestMakeRepository_Error_GetBaseDir() {
 
 	// It also makes GetBaseDir fail
-	ut.mockedStorage.On("getUserHomeDir").Return("", errors.New("Fail to retrive Home"))
+	ut.mockedStorage.On("GetUserHomeDir").Return("", errors.New("Fail to retrive Home"))
 
 	err := ut.stgTest.MakeRepository("testRepository")
 	ut.Error(err)
@@ -146,7 +146,7 @@ func (ut *UTStorageSuite) TestMakeRepository_Error_missing_metadata_dir() {
 
 	homeDir := filepath.Join(os.TempDir(), "testTUFieUser")
 	// mock to use the $TEMP/testTUFieUser user
-	ut.mockedStorage.On("getUserHomeDir").Return(homeDir, nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(homeDir, nil)
 
 	// removes the sub-director metadata $TEMP/testTUFieUser/.tufie/metadata
 	metadataDir := filepath.Join(homeDir, ".tufie", "metadata")
@@ -170,7 +170,7 @@ func (ut *UTStorageSuite) TestMakeRepository_Error_missing_metadata_dir_but_fail
 
 	homeDir := filepath.Join(os.TempDir(), "testTUFieUser")
 	// mock to use the $TEMP/testTUFieUser user
-	ut.mockedStorage.On("getUserHomeDir").Return(homeDir, nil)
+	ut.mockedStorage.On("GetUserHomeDir").Return(homeDir, nil)
 
 	// removes the sub-director metadata $TEMP/testTUFieUser/.tufie/metadata
 	metadataDir := filepath.Join(homeDir, ".tufie", "metadata")

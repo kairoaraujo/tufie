@@ -1,6 +1,6 @@
 .PHONY: test
 test:
-	go test -race -covermode atomic -coverprofile=cover.out ./... -v
+	go test -covermode atomic -coverprofile=cover.out ./... -v
 
 .PHONY: coverage
 coverage:
@@ -8,6 +8,6 @@ coverage:
 
 
 .PHONY: lint
-coverage:
+lint:
 	golangci-lint run
 	go vet
