@@ -8,6 +8,6 @@ coverage:
 
 
 .PHONY: lint
-coverage:
+lint:
 	golangci-lint run
 	go vet

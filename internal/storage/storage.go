@@ -8,7 +8,7 @@ import (
 // Manages the tufie storage
 type Storage interface {
 	InitDirs() error
-	getUserHomeDir() (string, error)
+	GetUserHomeDir() (string, error)
 	GetBaseDir() (string, error)
 	MakeRepository(string) error
 }
@@ -22,13 +22,13 @@ type TufiStorageService struct {
 	StgService Storage
 }
 
-func (stg StorageService) getUserHomeDir() (string, error) {
+func (stg *StorageService) GetUserHomeDir() (string, error) {
 	return os.UserHomeDir()
 }
 
 // Get TUFie base directory ($HOME/.tufie)
 func (ts TufiStorageService) GetBaseDir() (string, error) {
-	userDir, err := ts.StgService.getUserHomeDir()
+	userDir, err := ts.StgService.GetUserHomeDir()
 	if err != nil {
 		return "", err
 	}

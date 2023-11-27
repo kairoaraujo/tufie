@@ -40,6 +40,8 @@ var (
 )
 
 func Execute() {
+	stgService := storage.StorageService{}
+	Storage = storage.TufiStorageService{StgService: &stgService}
 	err := TUFie.Execute()
 	if err != nil {
 		os.Exit(1)
@@ -47,17 +49,14 @@ func Execute() {
 }
 
 func init() {
-	stgService := storage.StorageService{}
-	Storage = storage.TufiStorageService{StgService: stgService}
-
 	cobra.OnInitialize(InitConfig)
-	tufBaseDir, err := Storage.GetBaseDir()
-	cobra.CheckErr(err)
+
 	TUFie.PersistentFlags().StringVarP(
-		&cfgFile, "config", "c", "", "config file (default is "+tufBaseDir+"/config.yaml)",
+		&cfgFile, "config", "c", "", "config file (default is $HOME/.tufie/config.yaml)",
 	)
-	err = viper.BindPFlag("config", TUFie.PersistentFlags().Lookup("config"))
+	err := viper.BindPFlag("config", TUFie.PersistentFlags().Lookup("config"))
 	cobra.CheckErr(err)
+
 	TUFie.AddCommand(downloadCmd)
 	TUFie.AddCommand(repositoryCmd)
 
