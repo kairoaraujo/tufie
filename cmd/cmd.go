@@ -4,7 +4,6 @@ Copyright © 2023 Kairo de Araujo <kairo@dearaujo.nl>
 package cmd
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/kairoaraujo/tufie/internal/storage"
@@ -79,7 +78,7 @@ func InitConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Config file used for tuf:", viper.ConfigFileUsed())
+		TUFie.Println("Config file used for tuf:", viper.ConfigFileUsed())
 	}
 
 }

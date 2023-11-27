@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -88,9 +87,9 @@ type RepositoryConfig struct {
 
 // Prints Reposirory Configuration
 func printRepository(repository *RepositoryConfig) {
-	fmt.Printf("\nRepository: %v\n", repository.repository)
-	fmt.Printf("Artifact Base URL: %v\n", repository.targetURL)
-	fmt.Printf("Metadata Base URL: %v\n", repository.metadataURL)
+	TUFie.Printf("\nRepository: %v\n", repository.repository)
+	TUFie.Printf("Artifact Base URL: %v\n", repository.targetURL)
+	TUFie.Printf("Metadata Base URL: %v\n", repository.metadataURL)
 }
 
 // Gets an specific Repository configuration from Config
@@ -119,17 +118,17 @@ func setRepository(ccmd *cobra.Command, args []string) {
 	_, ok := config.Repositories[repository]
 	if ok {
 		if config.DefaultRepository == repository {
-			fmt.Printf("\nNo changes. Current default repository is '%v'.\n", repository)
+			TUFie.Printf("\nNo changes. Current default repository is '%v'.\n", repository)
 			os.Exit(0)
 		}
 		config.DefaultRepository = repository
 		viper.Set("default_repository", repository)
 		err := viper.WriteConfigAs(viper.ConfigFileUsed())
 		cobra.CheckErr(err)
-		fmt.Printf("\nUpdated default repository to '%v'.\n", repository)
+		TUFie.Printf("\nUpdated default repository to '%v'.\n", repository)
 	} else {
 		listRepository(ccmd, []string{})
-		fmt.Printf("\nRepository '%v' doesn't exist.\nUse one of repositories above.\n", repository)
+		TUFie.Printf("\nRepository '%v' doesn't exist.\nUse one of repositories above.\n", repository)
 	}
 }
 
@@ -139,7 +138,7 @@ func listRepository(ccmd *cobra.Command, args []string) {
 
 	err := viper.Unmarshal(&config)
 	cobra.CheckErr(err)
-	fmt.Printf("\nDefault repository: %v\n", config.DefaultRepository)
+	TUFie.Printf("\nDefault repository: %v\n", config.DefaultRepository)
 
 	for k := range config.Repositories {
 		r, _ := getRepository(k, config)
@@ -173,7 +172,7 @@ func showRepository(ccmd *cobra.Command, args []string) {
 			printRepository(cr)
 
 		} else {
-			fmt.Println("Default repository not configured")
+			TUFie.Println("Default repository not configured")
 		}
 	}
 }
@@ -220,7 +219,7 @@ func addRepository(ccmd *cobra.Command, args []string) {
 	writeError := viper.WriteConfigAs(filepath.Join(tufBaseDir, "config.yml"))
 	cobra.CheckErr(writeError)
 
-	fmt.Printf("\nRepository '%v' added.\n", name)
+	TUFie.Printf("\nRepository '%v' added.\n", name)
 }
 
 func removeRepository(ccmd *cobra.Command, args []string) {
@@ -232,14 +231,14 @@ func removeRepository(ccmd *cobra.Command, args []string) {
 	cobra.CheckErr(err)
 
 	delete(viper.Get("repositories").(map[string]interface{}), repository)
-	fmt.Println(len(config.Repositories))
+	TUFie.Println(len(config.Repositories))
 	if config.DefaultRepository == repository {
 		if len(config.Repositories) == 1 {
 			viper.Set("default_repository", "")
 		} else {
 			for k := range config.Repositories {
 				viper.Set("default_repository", k)
-				fmt.Printf("New default repository: %v\n", k)
+				TUFie.Printf("New default repository: %v\n", k)
 				break
 			}
 		}
