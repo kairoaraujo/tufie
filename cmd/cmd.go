@@ -31,10 +31,12 @@ var (
 	Storage storage.TufiStorageService
 
 	TUFie = &cobra.Command{
-		Use:     "tufie",
-		Short:   "TUF Command Line Interface",
-		Long:    `The Update Framework (TUF) Command Line Interface`,
-		Version: "0.1.1",
+		Use:           "tufie",
+		Short:         "TUF Command Line Interface",
+		Long:          `The Update Framework (TUF) Command Line Interface`,
+		Version:       "0.1.1",
+		SilenceErrors: true,
+		SilenceUsage:  true,
 	}
 )
 
@@ -62,13 +64,14 @@ func init() {
 }
 
 func InitConfig() {
+	tufBaseDir, err := Storage.GetBaseDir()
+	cobra.CheckErr(err)
 
-	err := Storage.InitDirs()
+	err = Storage.InitDirs()
 	cobra.CheckErr(err)
 	if cfgFile != "" {
 		viper.SetConfigFile(cfgFile)
 	} else {
-		tufBaseDir, err := Storage.GetBaseDir()
 		cobra.CheckErr(err)
 		viper.AddConfigPath(tufBaseDir)
 		viper.SetConfigType("yaml")
@@ -78,7 +81,21 @@ func InitConfig() {
 	viper.AutomaticEnv()
 
 	if err := viper.ReadInConfig(); err == nil {
-		TUFie.Println("Config file used for tuf:", viper.ConfigFileUsed())
+		TUFie.Println("Config file used for TUFie:", viper.ConfigFileUsed())
 	}
 
+}
+
+func loadConfig() error {
+	err := viper.ReadInConfig()
+	if err != nil {
+		return err
+	}
+
+	err = viper.Unmarshal(&config)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
