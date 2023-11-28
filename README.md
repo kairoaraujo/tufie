@@ -62,7 +62,7 @@ Available Commands:
   set         Set the default repository
 ```
 
-Adding a new repository
+#### Add new repository
 
 ```console
 Usage:
@@ -77,11 +77,13 @@ Flags:
   -n, --name string           repository name
   -r, --root string           trusted Root metadata
 
-$ tufie repository add --default -a https://rubygems.org --metadata-url https://metadata.rubygems.org --root rubygems-root.json --name rubygems
+$ tufie repository add --default --artifact-url https://rubygems.org --metadata-url https://metadata.rubygems.org --root rubygems-root.json --name rubygems
 Config file used for tuf: /Users/kairoaraujo/.tufie/config.yml
 
 Repository 'rubygems' added.
 ```
+
+#### List repositories
 
 ```console
 $ tufie repository list
@@ -98,6 +100,8 @@ Artifact Base URL: https://rubygems.org
 Metadata Base URL: https://metadata.rubygems.org
 ```
 
+#### Set repository as the default
+
 ```console
 $ tufie repository set rstuf
 Config file used for tuf: /Users/kairoaraujo/.tufie/config.yml
@@ -105,4 +109,45 @@ Config file used for tuf: /Users/kairoaraujo/.tufie/config.yml
 Updated default repository to 'rstuf'.
 ```
 
+## Contributing
 
+[Fork](https://docs.github.com/en/get-started/quickstart/fork-a-repo) the
+repository on [GitHub](https://github.com/kairoaraujo/tufie) and
+[clone](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)
+it to your local machine:
+
+```
+git clone git@github.com:YOUR-USERNAME/tufie.git
+```
+
+Add a [remote](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/configuring-a-remote-for-a-fork) and
+regularly [sync](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/syncing-a-fork) to make sure you stay up-to-date with our repository:
+
+```
+git remote add upstream https://github.com/kairoaraujo/tufie
+git checkout main
+git fetch upstream
+git merge upstream/main
+```
+
+## Requirements
+
+Install [Go](https://go.dev)
+
+```
+go mod tidy
+```
+
+## Tests
+
+```
+make test
+```
+
+## Link
+
+Install [golangci-lint](https://golangci-lint.run/usage/install/)
+
+```
+make lint
+```
