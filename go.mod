@@ -1,6 +1,6 @@
 module github.com/kairoaraujo/tufie
 
-go 1.21.4
+go 1.21
 
 require (
 	github.com/rdimitrov/go-tuf-metadata v0.0.0-20231106194136-80164b386509
