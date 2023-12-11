@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/rdimitrov/go-tuf-metadata v0.0.0-20231106194136-80164b386509
 	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.0
+	github.com/spf13/viper v1.18.1
 	github.com/stretchr/testify v1.8.4
 )
 
