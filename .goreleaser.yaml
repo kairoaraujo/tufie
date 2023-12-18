@@ -1,5 +1,5 @@
 # .goreleaser.yml
-project_name: TUFie
+project_name: tufie
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -17,7 +17,7 @@ builds:
     goarch:
       - amd64
       - arm64
-    main: ./cmd
+    main: ./
 # This section defines how to release binaries and archives.
 archives:
   - format: tar.gz # we can use binary, but it seems there's an issue where goreleaser skips the sboms
@@ -43,9 +43,9 @@ brews:
 winget:
   - name: tufie
     publisher: kairoaraujo
-    license: BSD-2 Clause
+    license: MIT
     license_url: "https://github.com/kairoaraujo/tufie/blob/master/LICENSE"
-    copyright: Radoslav Dimitrov
+    copyright: Kairo de Araujo
     homepage: https://github.com/kairoaraujo/tufie
     short_description: 'TUFie an Open Source generic TUF client'
     publisher_support_url: "https://github.com/kairoaraujo/tufie/issues/new"
