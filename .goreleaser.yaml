@@ -1,0 +1,97 @@
+# .goreleaser.yml
+project_name: TUFie
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    - go generate ./...
+# This section defines the build matrix
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd
+# This section defines how to release binaries and archives.
+archives:
+  - format: tar.gz # we can use binary, but it seems there's an issue where goreleaser skips the sboms
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}" # "{{ .Binary }}-{{ .Os }}-{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+# This section defines how to release to homebrew.
+brews:
+  - homepage: 'https://github.com/kairoaraujo/tufie'
+    description: 'TUFie an Open Source generic TUF client'
+    folder: Formula
+    commit_author:
+      name: kairoaraujo
+      email: kairo@dearaujo.nl
+    repository:
+      owner: kairoaraujo
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    test: |
+      system "#{bin}/tufie --help"
+# This section defines how to release to winget.
+winget:
+  - name: tufie
+    publisher: kairoaraujo
+    license: BSD-2 Clause
+    license_url: "https://github.com/kairoaraujo/tufie/blob/master/LICENSE"
+    copyright: Radoslav Dimitrov
+    homepage: https://github.com/kairoaraujo/tufie
+    short_description: 'TUFie an Open Source generic TUF client'
+    publisher_support_url: "https://github.com/kairoaraujo/tufie/issues/new"
+    package_identifier: "kairoaraujo.tufie"
+    url_template: "https://github.com/kairoaraujo/tufie/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    skip_upload: auto
+    release_notes: "{{.Changelog}}"
+    tags:
+      - golang
+      - cli
+    commit_author:
+      name: kairoaraujo
+      email: kairo@dearaujo.nl
+    goamd64: v1
+    repository:
+      owner: kairoaraujo
+      name: winget-pkgs
+      branch: "tufie-{{.Version}}"
+      token: "{{ .Env.WINGET_GITHUB_TOKEN }}"
+      pull_request:
+        enabled: true
+        draft: true
+        base:
+          owner: microsoft
+          name: winget-pkgs
+          branch: master
+source:
+  enabled: true
+changelog:
+  sort: asc
+  use: github
+sboms:
+  - artifacts: archive
+release:
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  prerelease: auto
+  github:
+    owner: kairoaraujo
+    name: tufie
+signs:
+  - cmd: cosign
+    args:
+      - "sign-blob"
+      - "--output-signature=${signature}"
+      - "${artifact}"
+      - "--yes" # needed on cosign 2.0.0+
+    artifacts: archive
+    output: true
