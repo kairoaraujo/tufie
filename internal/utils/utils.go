@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/rdimitrov/go-tuf-metadata/metadata"
 	"github.com/spf13/cobra"
+	"github.com/theupdateframework/go-tuf/v2/metadata"
 )
 
 func StringSha(s string) string {
