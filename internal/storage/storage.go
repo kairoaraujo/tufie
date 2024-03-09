@@ -36,7 +36,7 @@ func (ts TufiStorageService) GetBaseDir() (string, error) {
 	return baseDir, nil
 }
 
-// Initialize directories for TUFie
+// Initialize directories for TUFiez
 // - $HOME/.tufie
 // - $HOME/.tufie/metadata
 func (ts TufiStorageService) InitDirs() error {

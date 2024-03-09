@@ -8,9 +8,9 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/rdimitrov/go-tuf-metadata/metadata"
-	"github.com/rdimitrov/go-tuf-metadata/metadata/config"
-	"github.com/rdimitrov/go-tuf-metadata/metadata/updater"
+	"github.com/theupdateframework/go-tuf/v2/metadata"
+	"github.com/theupdateframework/go-tuf/v2/metadata/config"
+	"github.com/theupdateframework/go-tuf/v2/metadata/updater"
 )
 
 // DownloadTarget downloads the target file using Updater. The Updater refreshes the top-level metadata,
@@ -60,7 +60,7 @@ func DownloadTarget(
 		return fmt.Errorf("failed while finding a cached target: %w", err)
 	}
 	if path != "" {
-		log.V(4).Info("Target is already present", "target", target, "path", path)
+		log.Info("Target is already present", "target", target, "path", path)
 	}
 
 	// target is not present locally, so let's try to download it
@@ -69,7 +69,7 @@ func DownloadTarget(
 		return fmt.Errorf("failed to download target file %s - %w", target, err)
 	}
 
-	log.V(4).Info("Successfully downloaded target", "target", target, "path", path)
+	log.Info("Successfully downloaded target", "target", target, "path", path)
 
 	return nil
 }
