@@ -4,9 +4,12 @@ Copyright © 2023 Kairo de Araujo <kairo@dearaujo.nl>
 package cmd
 
 import (
+	stdlog "log"
 	"os"
 
+	"github.com/go-logr/stdr"
 	"github.com/kairoaraujo/tufie/internal/storage"
+	"github.com/theupdateframework/go-tuf/v2/metadata"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -27,8 +30,9 @@ type Config struct {
 }
 
 var (
-	cfgFile string
-	Storage storage.TufiStorageService
+	cfgFile   string
+	verbosity bool
+	Storage   storage.TufiStorageService
 
 	TUFie = &cobra.Command{
 		Use:           "tufie",
@@ -55,6 +59,7 @@ func init() {
 	TUFie.PersistentFlags().StringVarP(
 		&cfgFile, "config", "c", "", "config file (default is $HOME/.tufie/config.yaml)",
 	)
+	TUFie.PersistentFlags().BoolVarP(&verbosity, "verbose", "v", false, "verbose output")
 	err := viper.BindPFlag("config", TUFie.PersistentFlags().Lookup("config"))
 	cobra.CheckErr(err)
 
@@ -64,6 +69,11 @@ func init() {
 }
 
 func InitConfig() {
+	metadata.SetLogger(stdr.New(stdlog.New(os.Stdout, "metadata - ", stdlog.LstdFlags)))
+	if verbosity {
+		stdr.SetVerbosity(5)
+	}
+
 	tufBaseDir, err := Storage.GetBaseDir()
 	cobra.CheckErr(err)
 
