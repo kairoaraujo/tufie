@@ -23,7 +23,7 @@ Artifact v1.0.3/demo_package-1.0.3.tar.gz donwload completed.
 ## HomeBrew
 
 ```shell
-brew install kairoaraujo/tufie/tufie
+brew install kairoaraujo/tap/tufie
 ```
 
 ## Winget (Windows)
