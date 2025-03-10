@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Kairo de Araujo <kairo@dearaujo.nl>
+Copyright © 2023-2025 Kairo de Araujo <kairo@dearaujo.nl>
 */
 package cmd
 
@@ -38,7 +38,7 @@ var (
 		Use:           "tufie",
 		Short:         "TUF Command Line Interface",
 		Long:          `The Update Framework (TUF) Command Line Interface`,
-		Version:       "0.1.2",
+		Version:       "0.3.1",
 		SilenceErrors: true,
 		SilenceUsage:  true,
 	}
