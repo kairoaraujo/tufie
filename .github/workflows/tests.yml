@@ -31,7 +31,7 @@ jobs:
         run: make test
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574
+        uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d
 
   checks:
     name: Checks and linters
@@ -47,7 +47,7 @@ jobs:
           check-latest: true
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84
+        uses: golangci/golangci-lint-action@1481404843c368bc19ca9406f87d6e0fc97bdcfd
         with:
           version: latest
           args: --timeout 5m --verbose
